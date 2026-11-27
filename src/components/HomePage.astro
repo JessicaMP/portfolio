@@ -1,0 +1,35 @@
+---
+// Página principal reutilizada por ambos idiomas (/ y /en/).
+import Layout from '@/layouts/Layout.astro';
+import Navbar from '@/components/Navbar';
+import Logo from '@/components/Logo.astro';
+import Hero from '@/components/Hero.astro';
+import About from '@/components/About.astro';
+import Services from '@/components/Services.astro';
+import Timeline from '@/components/Timeline.astro';
+import Projects from '@/components/Projects.astro';
+import Skills from '@/components/Skills.astro';
+import Footer from '@/components/Footer.astro';
+import { getData, langPath, type Lang } from '@/data/i18n';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const { navLinks, ui } = getData(lang);
+const other: Lang = lang === 'es' ? 'en' : 'es';
+const langSwitch = { href: langPath[other], hreflang: other, ...ui.langSwitch };
+---
+
+<Layout lang={lang}>
+  <Navbar client:load links={navLinks} ctaHref="#contacto" labels={ui.nav} langSwitch={langSwitch}>
+    <Logo lang={lang} />
+  </Navbar>
+  <main>
+    <Hero lang={lang} />
+    <About lang={lang} />
+    <Services lang={lang} />
+    <Timeline lang={lang} />
+    <Projects lang={lang} />
+    <Skills lang={lang} />
+  </main>
+  <Footer lang={lang} />
+</Layout>

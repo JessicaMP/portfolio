@@ -1,0 +1,48 @@
+---
+import SectionHeading from './SectionHeading.astro';
+import { getData, type Lang } from '@/data/i18n';
+
+interface Props { lang?: Lang }
+const { lang = 'es' } = Astro.props;
+const { services, sections } = getData(lang);
+---
+
+<section id="servicios" class="bg-ink py-24">
+  <div class="container-page">
+    <SectionHeading
+      tag={sections.services.tag}
+      title={sections.services.title}
+      subtitle={sections.services.subtitle}
+      dark
+    />
+    <div class="grid gap-7 pt-14 md:grid-cols-3">
+      {services.map((s, i) => (
+        <article class="reveal group rounded-[var(--radius-card)] border border-transparent bg-sky p-8 transition duration-500 ease-out-soft hover:-translate-y-1.5 hover:border-white/60 hover:shadow-[0_24px_50px_-20px_rgb(144_224_239/0.55)]" style={`--reveal-delay:${i * 120}ms`}>
+          <!-- Icono bicolor al estilo del diseño -->
+          <svg width="50" height="50" viewBox="0 0 50 50" aria-hidden="true" class="transition-transform duration-500 ease-out-soft group-hover:scale-110 group-hover:-rotate-6">
+            {i === 0 && (
+              <>
+                <path stroke-linejoin="round" stroke-width="4" d="M15 10h22l8 14-8 16H19L11 26z" fill="#f4a261" transform="translate(4 3)" />
+                <path stroke-linejoin="round" stroke-width="4" d="M15 10h22l8 14-8 16H19L11 26z" fill="#0077b6" />
+              </>
+            )}
+            {i === 1 && (
+              <>
+                <rect x="16" y="13" width="26" height="32" rx="13" fill="#0077b6" />
+                <path d="M10 22a12 12 0 0 1 24 0v20H10z" fill="#f4a261" />
+              </>
+            )}
+            {i === 2 && (
+              <>
+                <rect x="16" y="10" width="24" height="24" rx="6" fill="#f4a261" transform="rotate(20 28 22)" />
+                <rect x="10" y="14" width="24" height="24" rx="6" fill="#0077b6" transform="rotate(20 22 26)" />
+              </>
+            )}
+          </svg>
+          <h3 class="pt-5 text-xl leading-7 font-semibold text-ink">{s.title}</h3>
+          <p class="pt-5 text-base leading-6 text-ink/75">{s.description}</p>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>

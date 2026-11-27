@@ -1,0 +1,15 @@
+---
+import { getData, type Lang } from '@/data/i18n';
+
+interface Props { lang?: Lang }
+const { lang = 'es' } = Astro.props;
+const { profile } = getData(lang);
+const homeLabel = lang === 'en' ? 'go to top' : 'ir al inicio';
+---
+<a href="#inicio" class="group flex h-10 items-center gap-2.5" aria-label={`${profile.name}, ${homeLabel}`}>
+  <svg width="34" height="40" viewBox="0 0 34 40" aria-hidden="true" class="transition-transform duration-500 ease-out-soft group-hover:-rotate-6 group-hover:scale-105">
+    <rect x="0" y="0" width="16" height="40" rx="5" fill="#0077b6" />
+    <rect x="18" y="14" width="16" height="26" rx="5" fill="#f4a261" />
+  </svg>
+  <span class="text-2xl leading-none font-bold text-white">{profile.firstName}</span>
+</a>

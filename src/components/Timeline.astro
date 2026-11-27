@@ -1,0 +1,132 @@
+---
+import { Building2, GraduationCap } from 'lucide-react';
+import SectionHeading from './SectionHeading.astro';
+import TechIcon from './TechIcon';
+import { getData, type Lang } from '@/data/i18n';
+
+interface Props { lang?: Lang }
+const { lang = 'es' } = Astro.props;
+const { experience, education, sections, ui } = getData(lang);
+
+type Item = {
+  kind: 'work' | 'edu';
+  title: string;
+  subtitle: string;
+  period: string;
+  location: string;
+  description?: string;
+  highlights?: string[];
+  tools?: (typeof experience)[number]['tools'];
+};
+
+const workItems: Item[] = experience.map((e) => ({
+  kind: 'work',
+  title: e.company,
+  subtitle: e.role,
+  period: e.period,
+  location: e.location,
+  description: e.description,
+  highlights: e.highlights,
+  tools: e.tools,
+}));
+
+const eduItems: Item[] = education.map((e) => ({
+  kind: 'edu',
+  title: e.program,
+  subtitle: e.institution,
+  period: e.period,
+  location: e.location,
+}));
+
+const groups = [
+  { label: ui.timeline.work, items: workItems },
+  { label: ui.timeline.edu, items: eduItems },
+];
+---
+
+<section id="experiencia" class="relative isolate overflow-hidden py-24">
+  <!-- Fondo decorativo (degradado suave celeste y arena) -->
+  <div aria-hidden="true" class="pointer-events-none absolute inset-0 -z-10">
+    <div class="absolute -top-32 -left-32 size-[520px] rounded-full bg-sky/30 blur-3xl"></div>
+    <div class="absolute top-1/2 -right-40 size-[480px] -translate-y-1/2 rounded-full bg-peach/60 blur-3xl"></div>
+    <div class="absolute -bottom-24 -left-24 size-[440px] rounded-full bg-sky/25 blur-3xl"></div>
+  </div>
+  <div class="container-page">
+    <SectionHeading
+      tag={sections.timeline.tag}
+      title={sections.timeline.title}
+      subtitle={sections.timeline.subtitle}
+    />
+
+    <div class="relative pt-14">
+      <!-- Línea central (izquierda en móvil) -->
+      <div class="absolute top-14 bottom-0 left-[5px] w-0.5 bg-line md:left-1/2 md:-translate-x-1/2" aria-hidden="true"></div>
+
+      {groups.map((group, gi) => (
+        <div class:list={[gi > 0 && 'pt-16']}>
+          <div class="relative z-10 flex pb-8 pl-8 md:justify-center md:pl-0">
+            <span class="rounded-full bg-ink px-5 py-2.5 text-sm font-semibold tracking-wide text-white uppercase">{group.label}</span>
+          </div>
+
+          <ol class="space-y-8">
+            {group.items.map((item, i) => {
+              const left = i % 2 === 0;
+              const Icon = item.kind === 'work' ? Building2 : GraduationCap;
+              return (
+                <li class="reveal relative md:grid md:grid-cols-2">
+                  <!-- Punto con degradado -->
+                  <span
+                    class="bg-brand-radial absolute top-[60px] left-0 size-3 rounded-full ring-4 ring-white md:left-1/2 md:-translate-x-1/2"
+                    aria-hidden="true"
+                  ></span>
+
+                  <div
+                    class:list={[
+                      'pl-8',
+                      left ? 'md:col-start-1 md:pr-14 md:pl-7 md:text-right' : 'md:col-start-2 md:pl-14',
+                    ]}
+                  >
+                    <div class:list={['flex', left && 'md:justify-end']}>
+                      <Icon size={34} strokeWidth={1.5} className="text-primary" aria-hidden="true" />
+                    </div>
+
+                    <div class:list={['flex flex-wrap items-center gap-x-12 gap-y-1 pt-5', left && 'md:flex-row-reverse md:justify-start']}>
+                      <h3 class="text-xl leading-7 font-semibold text-ink">{item.title}</h3>
+                      <p class="text-base leading-6 font-semibold text-primary">{item.period}</p>
+                    </div>
+                    <p class="pt-1 text-base font-semibold text-ink/80">{item.subtitle}</p>
+
+                    {item.description && <p class="pt-4 text-base leading-6 text-muted">{item.description}</p>}
+
+                    {item.highlights && (
+                      <ul class:list={['space-y-2 pt-4 text-base leading-6 text-muted', left && 'md:[&>li]:flex-row-reverse']}>
+                        {item.highlights.map((h) => (
+                          <li class="flex gap-3">
+                            <span class="mt-2.5 size-1.5 shrink-0 rounded-full bg-accent" aria-hidden="true"></span>
+                            <span>{h}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+
+                    <p class="pt-6 text-base leading-6 font-semibold text-ink">{item.location}</p>
+
+                    {item.tools && (
+                      <ul class:list={['flex flex-wrap gap-3 pt-7', left && 'md:justify-end']} aria-label={ui.timeline.tools}>
+                        {item.tools.map((t) => (
+                          <li class="flex size-14 items-center justify-center rounded-full border-2 border-muted/10 bg-gradient-to-b from-muted/10 to-muted/0 backdrop-blur-2xl">
+                            <TechIcon name={t} size={24} />
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                </li>
+              );
+            })}
+          </ol>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

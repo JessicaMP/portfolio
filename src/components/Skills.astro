@@ -1,0 +1,63 @@
+---
+import SectionHeading from './SectionHeading.astro';
+import TechIcon from './TechIcon';
+import { getData, type Lang } from '@/data/i18n';
+
+interface Props { lang?: Lang }
+const { lang = 'es' } = Astro.props;
+const { skills, skillGroups, achievements, sections } = getData(lang);
+---
+
+<section id="skills" class="bg-soft py-24">
+  <div class="container-page">
+    <SectionHeading
+      tag={sections.skills.tag}
+      title={sections.skills.title}
+      subtitle={sections.skills.subtitle}
+    />
+
+    <div class="grid items-center gap-14 pt-14 lg:grid-cols-2">
+      <!-- Píldoras de skills -->
+      <ul class="grid grid-cols-3 gap-4 sm:grid-cols-4 sm:gap-7">
+        {skills.map((s) => (
+          <li class="flex flex-col items-center rounded-[2rem] border-2 border-line-strong bg-white/70 px-2 py-7 text-center transition duration-300 ease-out-soft hover:-translate-y-1.5 hover:border-primary hover:shadow-lg hover:shadow-primary/15">
+            <TechIcon name={s.key} size={30} />
+            <span class="pt-3 text-sm leading-5 font-semibold text-ink">{s.label}</span>
+          </li>
+        ))}
+      </ul>
+
+      <!-- Logros con estilo de insignia -->
+      <div class="grid gap-6 sm:grid-cols-3 lg:grid-cols-1">
+        {achievements.map((a, i) => (
+          <div
+            class:list={[
+              'reveal group flex items-center gap-6 rounded-[var(--radius-card)] border border-line-strong bg-white p-6 shadow-[0_8px_30px_-14px_rgb(3_4_94/0.15)] transition duration-500 ease-out-soft hover:-translate-y-1 hover:border-accent/40 hover:shadow-[0_20px_40px_-18px_rgb(0_119_182/0.35)]',
+              i === 1 && 'lg:ml-16',
+            ]}
+          >
+            <div class="relative flex shrink-0 flex-col items-center">
+              <svg class="absolute -inset-x-6 -top-3 h-[84px] w-[calc(100%+48px)] text-muted/30" viewBox="0 0 120 84" fill="currentColor" aria-hidden="true">
+                <path d="M18 10c-10 14-10 40 6 60l4-3C14 50 14 28 22 13zM102 10c10 14 10 40-6 60l-4-3c14-17 14-39 6-54z" />
+              </svg>
+              <span class="relative text-4xl leading-none font-extrabold text-primary">{a.value}</span>
+            </div>
+            <div class="border-l-2 border-line pl-6 transition-colors duration-500 group-hover:border-accent">
+              <p class="text-lg leading-6 font-semibold text-ink">{a.title}</p>
+              <p class="pt-1 text-sm leading-5 text-muted">{a.detail}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <dl class="grid gap-x-7 gap-y-6 border-t-2 border-line pt-12 mt-16 sm:grid-cols-2 lg:grid-cols-4">
+      {skillGroups.map((g) => (
+        <div>
+          <dt class="text-sm font-semibold tracking-wide text-primary uppercase">{g.title}</dt>
+          <dd class="pt-2 text-sm leading-6 text-muted">{g.items}</dd>
+        </div>
+      ))}
+    </dl>
+  </div>
+</section>

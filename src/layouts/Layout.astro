@@ -1,0 +1,122 @@
+---
+import '@/styles/global.css';
+import { getData, LANGS, langPath, type Lang } from '@/data/i18n';
+
+interface Props {
+  lang?: Lang;
+  title?: string;
+  description?: string;
+}
+
+const { lang = 'es' } = Astro.props;
+const { profile, ui } = getData(lang);
+const title = Astro.props.title ?? ui.meta.title;
+const description = Astro.props.description ?? ui.meta.description;
+const site = Astro.site ?? new URL('http://localhost:4321');
+const canonical = new URL(langPath[lang], site).href;
+const ogImage = new URL(lang === 'en' ? '/og-image-en.png' : '/og-image.png', site).href;
+const otherLocale = getData(lang === 'es' ? 'en' : 'es').ui.meta.locale;
+
+// Datos estructurados (schema.org) para que Google entienda quién eres
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Person',
+      '@id': new URL('/#person', site).href,
+      name: profile.name,
+      jobTitle: ui.meta.jobTitle,
+      description,
+      url: canonical,
+      image: new URL(profile.photo, site).href,
+      email: `mailto:${profile.email}`,
+      address: { '@type': 'PostalAddress', addressLocality: 'Lima', addressCountry: 'PE' },
+      sameAs: [profile.linkedin, profile.github],
+      knowsAbout: ['Java', 'Spring Boot', 'Vue.js', 'Nuxt.js', 'TypeScript', 'JavaScript', 'REST APIs', 'GraphQL', 'AWS', 'NestJS', 'MongoDB', 'MySQL'],
+      knowsLanguage: ['es', 'en'],
+    },
+    {
+      '@type': 'WebSite',
+      '@id': new URL('/#website', site).href,
+      url: new URL('/', site).href,
+      name: `${profile.name} · Portfolio`,
+      inLanguage: LANGS,
+      publisher: { '@id': new URL('/#person', site).href },
+    },
+  ],
+};
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content={profile.name} />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <link rel="canonical" href={canonical} />
+
+    <!-- Versiones de idioma -->
+    {LANGS.map((l) => <link rel="alternate" hreflang={l} href={new URL(langPath[l], site).href} />)}
+    <link rel="alternate" hreflang="x-default" href={new URL(langPath.es, site).href} />
+    <link rel="sitemap" href="/sitemap.xml" />
+
+    <!-- Favicons -->
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#0a2540" />
+
+    <!-- Open Graph (LinkedIn, WhatsApp, Facebook…) -->
+    <meta property="og:type" content="profile" />
+    <meta property="og:site_name" content={`${profile.name} · Portfolio`} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${profile.name} · ${profile.role}`} />
+    <meta property="og:locale" content={ui.meta.locale} />
+    <meta property="og:locale:alternate" content={otherLocale} />
+    <meta property="profile:first_name" content={profile.firstName} />
+    <meta property="profile:last_name" content={profile.name.replace(`${profile.firstName} `, '')} />
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </head>
+<body>
+    <a href="#inicio" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[60] focus:bg-white focus:px-4 focus:py-2">
+      {ui.skip}
+    </a>
+    <slot />
+    <script>
+      // Revela con transición los elementos .reveal al entrar en pantalla
+      const els = document.querySelectorAll<HTMLElement>('.reveal');
+      if (!('IntersectionObserver' in window)) {
+        els.forEach((el) => el.classList.add('is-visible'));
+      } else {
+        const io = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((e) => {
+              if (e.isIntersecting) {
+                e.target.classList.add('is-visible');
+                io.unobserve(e.target);
+              }
+            });
+          },
+          { threshold: 0.12, rootMargin: '0px 0px -40px 0px' },
+        );
+        els.forEach((el) => io.observe(el));
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,22 @@
+---
+import SectionHeading from './SectionHeading.astro';
+import ProjectSlider from './ProjectSlider';
+import { getData, type Lang } from '@/data/i18n';
+
+interface Props { lang?: Lang }
+const { lang = 'es' } = Astro.props;
+const { projects, sections, ui } = getData(lang);
+---
+
+<section id="proyectos" class="py-24">
+  <div class="container-page">
+    <SectionHeading
+      tag={sections.projects.tag}
+      title={sections.projects.title}
+      subtitle={sections.projects.subtitle}
+    />
+    <div class="pt-14">
+      <ProjectSlider client:visible projects={projects} labels={ui.projects} />
+    </div>
+  </div>
+</section>

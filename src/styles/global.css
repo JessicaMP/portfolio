@@ -1,0 +1,113 @@
+@import 'tailwindcss';
+@import '@fontsource/sora/400.css';
+@import '@fontsource/sora/600.css';
+@import '@fontsource/sora/700.css';
+@import '@fontsource/sora/800.css';
+
+/* Paleta océano y arena */
+@theme {
+  --font-sans: 'Sora', ui-sans-serif, system-ui, sans-serif;
+
+  /* Base */
+  --color-ink: #0a2540;          /* azul marino profundo: textos y secciones oscuras */
+  --color-navy: #0d3157;
+  --color-muted: #5b6b7c;
+  --color-primary: #0077b6;      /* azul océano: botones, enlaces */
+  --color-primary-dark: #005f92;
+  --color-sky: #90e0ef;          /* celeste: superficies y detalles */
+  --color-sand: #f6f1e9;         /* arena: fondos suaves */
+  --color-sand-deep: #ece3d4;
+  --color-peach: #fbe3cc;        /* arena cálida */
+  --color-accent: #f4a261;       /* ámbar: acento cálido, usar poco */
+  --color-accent-dark: #b4632a;  /* ámbar legible sobre fondos claros */
+  --color-line: rgb(10 37 64 / 0.1);
+  --color-line-strong: rgb(10 37 64 / 0.18);
+  --color-soft: #f6f1e9;
+
+  --radius-card: 1.75rem;
+
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-shimmer: shimmer 3.5s linear infinite;
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+  @keyframes shimmer {
+    to { background-position: 200% center; }
+  }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 100px;
+  }
+  body {
+    @apply bg-white font-sans text-ink antialiased;
+  }
+  ::selection {
+    @apply bg-primary text-white;
+  }
+}
+
+@utility container-page {
+  @apply mx-auto w-full max-w-[1280px] px-4;
+}
+
+/* Degradado radial de la paleta */
+@utility bg-brand-radial {
+  background-image: radial-gradient(
+    ellipse at center,
+    #90e0ef 0%,
+    #3fb0d8 35%,
+    #0077b6 70%,
+    #0a2540 100%
+  );
+}
+
+/* Degradado lineal para botones y acentos */
+@utility bg-brand-linear {
+  background-image: linear-gradient(120deg, #0077b6 0%, #0096c7 50%, #0077b6 100%);
+  background-size: 200% auto;
+}
+
+/* Texto con degradado animado */
+@utility text-gradient {
+  background-image: linear-gradient(100deg, #0a2540 0%, #0077b6 35%, #0096c7 60%, #0a2540 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Animación de entrada al hacer scroll (ver script en Layout) */
+@utility reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 0.8s var(--ease-out-soft),
+    transform 0.8s var(--ease-out-soft);
+  transition-delay: var(--reveal-delay, 0ms);
+  &.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}

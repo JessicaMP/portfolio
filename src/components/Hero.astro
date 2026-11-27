@@ -1,0 +1,109 @@
+---
+import fs from 'node:fs';
+import path from 'node:path';
+import { UserRound, FileText } from 'lucide-react';
+import { getData, type Lang } from '@/data/i18n';
+
+interface Props { lang?: Lang }
+const { lang = 'es' } = Astro.props;
+const { profile, ui } = getData(lang);
+import HeroBackground from './HeroBackground';
+
+const hasPhoto = fs.existsSync(path.join(process.cwd(), 'public', profile.photo));
+const hasCv = fs.existsSync(path.join(process.cwd(), 'public', profile.cv));
+const cvHref = hasCv ? profile.cv : profile.linkedin;
+---
+
+<section id="inicio" class="relative isolate overflow-hidden pt-[100px]">
+  <HeroBackground client:load />
+  <div class="container-page grid items-center gap-5 lg:grid-cols-2">
+    <!-- Columna de texto -->
+    <div class="py-16 lg:py-24">
+      <p class="inline-flex items-center rounded-full bg-white/70 px-5 py-2 text-base leading-7 font-semibold text-primary shadow-sm ring-1 ring-primary/15 backdrop-blur">
+        {ui.hero.hello} {profile.name}
+      </p>
+      <h1 class="text-gradient animate-shimmer pt-8 text-[40px] leading-[1.4] font-bold tracking-tight sm:text-[50px] sm:leading-[75px]">
+        {profile.role}
+      </h1>
+      <p class="max-w-[571px] pt-6 text-base leading-8 text-muted">{profile.heroIntro}</p>
+
+      <div class="flex flex-wrap gap-5 pt-10">
+        <a
+          href={`mailto:${profile.email}`}
+          class="bg-brand-linear inline-flex h-[60px] items-center gap-2.5 rounded-full px-8 font-semibold text-white shadow-lg shadow-primary/25 transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:bg-right hover:shadow-xl hover:shadow-accent/35"
+        >
+          <UserRound size={24} aria-hidden="true" />
+          {ui.hero.hire}
+        </a>
+        <a
+          href={cvHref}
+          target={hasCv ? undefined : '_blank'}
+          rel={hasCv ? undefined : 'noopener'}
+          download={hasCv ? '' : undefined}
+          class="inline-flex h-[60px] items-center gap-2.5 rounded-full border-2 border-line-strong px-8 font-semibold text-ink transition duration-300 ease-out-soft hover:-translate-y-0.5 hover:border-primary hover:text-primary"
+        >
+          <FileText size={24} aria-hidden="true" />
+          {hasCv ? ui.hero.downloadCv : ui.hero.viewProfile}
+        </a>
+      </div>
+
+      <dl class="flex flex-wrap gap-x-12 gap-y-6 pt-20">
+        {profile.stats.map((s) => (
+          <div class="flex flex-col-reverse items-center text-center">
+            <dt class="pt-3 text-base leading-6 text-muted">{s.label}</dt>
+            <dd class="text-2xl leading-8 font-semibold text-ink">{s.value}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+
+    <!-- Columna visual: foto -->
+    <div class="relative flex items-center justify-center pb-16 lg:py-24">
+      <div class="relative z-10 w-[300px] sm:w-[360px] lg:w-[415px]">
+        {hasPhoto ? (
+          <img
+            src={profile.photo}
+            alt={`${ui.hero.portraitAlt} ${profile.name}`}
+            width="415"
+            height="615"
+            class="h-auto w-full rounded-[2rem]"
+            loading="eager"
+          />
+        ) : ( /* Placeholder hasta que agregues tu foto en public/images/jessica.png */
+
+          <div class="flex w-full flex-col lg:aspect-[415/540] animate-float overflow-hidden rounded-[2rem] border-2 border-line bg-ink shadow-2xl shadow-primary/30">
+            <div class="flex items-center gap-2 border-b border-white/10 px-5 py-4">
+              <span class="size-3 rounded-full bg-[#ff5f57]"></span>
+              <span class="size-3 rounded-full bg-accent"></span>
+              <span class="size-3 rounded-full bg-[#28c840]"></span>
+              <span class="ml-3 text-xs text-muted">Jessica.vue</span>
+            </div>
+            <pre class="flex-1 overflow-hidden px-5 py-5 text-[13px] leading-6 text-white/80 sm:text-sm"><code><span class="text-muted">&lt;script setup lang="ts"&gt;</span>
+<span class="text-sky">const</span> dev = {'{'}
+  name: <span class="text-accent">'Jessica'</span>,
+  role: <span class="text-accent">'Sr. Frontend'</span>,
+  stack: [<span class="text-accent">'Vue'</span>, <span class="text-accent">'Nuxt'</span>,
+          <span class="text-accent">'TypeScript'</span>],
+  pixelPerfect: <span class="text-sky">true</span>,
+  ownership: <span class="text-sky">true</span>,
+{'}'}
+<span class="text-muted">&lt;/script&gt;</span>
+
+<span class="text-muted">&lt;template&gt;</span>
+  &lt;<span class="text-[#4FC08D]">Product</span>
+    :quality=<span class="text-accent">"{ui.hero.quality}"</span>
+    :impact=<span class="text-accent">"'real'"</span> /&gt;
+<span class="text-muted">&lt;/template&gt;</span></code></pre>
+            <div class="flex items-center justify-between border-t border-white/10 px-5 py-4">
+              <span class="text-sm font-semibold text-white">{profile.location}</span>
+              <span class="flex items-center gap-2 text-xs text-[#28c840]">
+                <span class="size-2 rounded-full bg-[#28c840]"></span>
+                {ui.hero.available}
+              </span>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
+</section>
