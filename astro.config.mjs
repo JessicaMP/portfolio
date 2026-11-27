@@ -4,7 +4,7 @@ import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
-  site: 'https://jessicamanturano.pages.dev', // cambia esto si compras un dominio
+  site: 'https://porfolio.jessica95-mp.workers.dev', // cambia esto si compras un dominio
   integrations: [react()],
   vite: { plugins: [tailwindcss()] },
 });

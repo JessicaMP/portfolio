@@ -53,8 +53,9 @@ export const profile = {
   github: 'https://github.com/JessicaMP/',
   // Coloca tu foto en public/images/jessica.png (o cambia la ruta).
   photo: '/images/photo-draw.webp',
-  // Coloca tu CV en PDF en public/cv/Jessica-Manturano-CV.pdf
-  cv: '/cv/Jessica-Manturano-CV.pdf',
+  // CV en PDF: súbelo a public/cv/ y pon aquí su ruta, por ejemplo '/cv/Jessica-Manturano-CV.pdf'.
+  // Mientras esté vacío, el botón del hero lleva a tu LinkedIn.
+  cv: '',
   languages: 'Español (Nativo) - Inglés (B1)',
   mainStack: 'Java · Spring Boot · Vue.js · Nuxt.js',
   heroIntro:

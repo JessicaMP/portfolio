@@ -1,6 +1,4 @@
 ---
-import fs from 'node:fs';
-import path from 'node:path';
 import { UserRound, FileText } from 'lucide-react';
 import { getData, type Lang } from '@/data/i18n';
 
@@ -9,8 +7,10 @@ const { lang = 'es' } = Astro.props;
 const { profile, ui } = getData(lang);
 import HeroBackground from './HeroBackground';
 
-const hasPhoto = fs.existsSync(path.join(process.cwd(), 'public', profile.photo));
-const hasCv = fs.existsSync(path.join(process.cwd(), 'public', profile.cv));
+// Se muestran si tienen una ruta en profile.ts (deja '' si aún no tienes el archivo).
+// No se revisa el disco: en Cloudflare la carpeta de compilación es distinta.
+const hasPhoto = Boolean(profile.photo);
+const hasCv = Boolean(profile.cv);
 const cvHref = hasCv ? profile.cv : profile.linkedin;
 ---
 
